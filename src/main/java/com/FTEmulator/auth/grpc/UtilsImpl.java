@@ -8,11 +8,13 @@ import io.grpc.stub.StreamObserver;
 
 @GrpcService
 public class UtilsImpl extends UtilsGrpc.UtilsImplBase {
-        @Override
-        public void authStatus(UtilsOuterClass.AuthStatusRequest request, StreamObserver<AuthStatusResponse> responseObserver) {
-            UtilsOuterClass.AuthStatusResponse response = AuthStatusResponse.newBuilder().setOk(true).build();
 
-            responseObserver.onNext(response);
-            responseObserver.onCompleted();
-        }
+    // Status
+    @Override
+    public void authStatus(UtilsOuterClass.AuthStatusRequest request, StreamObserver<AuthStatusResponse> responseObserver) {
+        UtilsOuterClass.AuthStatusResponse response = AuthStatusResponse.newBuilder().setOk(true).build();
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
 }
