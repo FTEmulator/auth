@@ -1,0 +1,12 @@
+syntax = "proto3";
+option java_package = "com.FTEmulator.auth.grpc";
+
+service Utils {
+    rpc AuthStatus (AuthStatusRequest) returns (AuthStatusResponse);
+}
+
+message AuthStatusRequest {}
+
+message AuthStatusResponse {
+    bool ok = 1;
+}
