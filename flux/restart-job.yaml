@@ -1,0 +1,21 @@
+# FTEmulator - FTEmulator is a high-performance stock market investment simulator designed with extreme technical efficiency
+# Copyright (C) 2025-2025 Álex Frías (alexwebdev05)
+# Licensed under AGPL-3.0 - Commercial licensing: alexwebdev05@proton.me
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: auth-restart-job
+  namespace: auth
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: kubectl
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/sh
+            - -c
+            - kubectl -n api rollout restart deployment auth
+            

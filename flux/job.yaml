@@ -1,0 +1,52 @@
+# FTEmulator - FTEmulator is a high-performance stock market investment simulator designed with extreme technical efficiency
+# Copyright (C) 2025-2025 Álex Frías (alexwebdev05)
+# Licensed under AGPL-3.0 - Commercial licensing: alexwebdev05@proton.me
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: auth-update-job-REPLACEME
+  namespace: auth
+spec:
+  ttlSecondsAfterFinished: 200
+  backoffLimit: 4
+  template:
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: git-clone
+          image: alpine/git:2.49.0
+          command: ["/bin/sh", "-c"]
+          args: 
+            - |
+              rm -rf /repo/*
+              mkdir -p /repo
+              cd /repo
+              git clone --depth 1 https://github.com/FTEmulator/auth .
+          volumeMounts:
+            - name: repo-volume
+              mountPath: /repo
+      containers:
+        - name: sync
+          image: "gradle:8.7.0-jdk21"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              rm -rf /mnt/auth/*
+              cd /repo
+              chmod +x gradlew
+              ./gradlew bootJar
+              cp -r ./build/libs/*.jar /mnt/auth/app.jar
+              chmod +x /mnt/auth/app.jar
+              echo "La api se actualizo correctamente"
+          volumeMounts:
+            - name: auth-volume
+              mountPath: /mnt/auth/
+            - name: repo-volume
+              mountPath: /repo
+      volumes:
+        - name: auth-volume
+          persistentVolumeClaim:
+            claimName: auth-pvc
+        - name: repo-volume
+          emptyDir: {}
