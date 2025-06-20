@@ -61,6 +61,12 @@ protobuf {
 	}
 }
 
+bootJar {
+	archiveBaseName.set("app")
+	archiveVersion.set("")
+	archiveClassifier.set("")
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }
