@@ -38,6 +38,7 @@ spec:
               ./gradlew bootJar
               cp -r ./build/libs/*.jar /mnt/auth/app.jar
               chmod +x /mnt/auth/app.jar
+              kubectl -n auth rollout restart deployment auth
               echo "La api se actualizo correctamente"
           volumeMounts:
             - name: auth-volume
