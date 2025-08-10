@@ -8,5 +8,5 @@ service Utils {
 message AuthStatusRequest {}
 
 message AuthStatusResponse {
-    bool ok = 1;zz
+    bool ok = 1;
 }
