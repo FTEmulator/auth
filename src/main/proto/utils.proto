@@ -8,6 +8,5 @@ service Utils {
 message AuthStatusRequest {}
 
 message AuthStatusResponse {
-    bool ok = 1;
-    int32 statusCode = 2;
+    bool ok = 1;zz
 }

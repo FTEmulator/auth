@@ -32,10 +32,9 @@ public class UtilsImpl extends UtilsGrpc.UtilsImplBase {
     // Status
     @Override
     public void authStatus(AuthStatusRequest request, StreamObserver<AuthStatusResponse> responseObserver) {
-        AuthStatusResponse response = AuthStatusResponse.newBuilder()
-                                        .setOk(true)
-                                        .setStatusCode(201)
-                                        .build();
+        AuthStatusResponse response = AuthStatusResponse
+            .newBuilder()
+            .setOk(true).build();
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
