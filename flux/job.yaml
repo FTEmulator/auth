@@ -12,6 +12,7 @@ spec:
   backoffLimit: 4
   template:
     spec:
+      serviceAccountName: default
       restartPolicy: OnFailure
       initContainers:
         - name: git-clone
