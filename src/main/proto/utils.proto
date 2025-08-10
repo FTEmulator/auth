@@ -9,4 +9,5 @@ message AuthStatusRequest {}
 
 message AuthStatusResponse {
     bool ok = 1;
+    int32 statusCode = 2;
 }
