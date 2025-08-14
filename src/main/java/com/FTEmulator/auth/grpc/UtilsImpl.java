@@ -21,13 +21,13 @@ package com.FTEmulator.auth.grpc;
 
 import org.springframework.grpc.server.service.GrpcService;
 
-import com.FTEmulator.auth.grpc.UtilsOuterClass.AuthStatusRequest;
-import com.FTEmulator.auth.grpc.UtilsOuterClass.AuthStatusResponse;
+import com.FTEmulator.auth.grpc.AuthOuterClass.AuthStatusRequest;
+import com.FTEmulator.auth.grpc.AuthOuterClass.AuthStatusResponse;
 
 import io.grpc.stub.StreamObserver;
 
 @GrpcService
-public class UtilsImpl extends UtilsGrpc.UtilsImplBase {
+public class UtilsImpl extends AuthGrpc.AuthImplBase {
 
     // Status
     @Override
