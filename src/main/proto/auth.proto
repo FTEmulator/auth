@@ -2,11 +2,41 @@ syntax = "proto3";
 option java_package = "com.FTEmulator.auth.grpc";
 
 service Auth {
+
+    // Status
     rpc AuthStatus (AuthStatusRequest) returns (AuthStatusResponse);
+
+    // Verify token
+    rpc VerifyToken (VerifyTokenRequest) returns (VerifyTokenResponse);
+
+    // Create token
+    rpc CreateToken (CreateTokenRequest) returns (CreateTokenResponse);
+
 }
 
+// Status
 message AuthStatusRequest {}
 
 message AuthStatusResponse {
     bool ok = 1;
+}
+
+// Verify token
+message VerifyTokenRequest {
+    string token = 1;
+}
+
+message VerifyTokenResponse {
+    bool validity = 1;
+}
+
+// Create token
+message CreateTokenRequest {
+    string userId = 1;
+    string ipAddress = 2;
+    string sessionType = 3;
+}
+
+message CreateTokenResponse {
+    string token = 1;
 }

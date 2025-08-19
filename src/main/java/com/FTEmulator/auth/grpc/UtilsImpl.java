@@ -19,15 +19,32 @@
  */
 package com.FTEmulator.auth.grpc;
 
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.grpc.server.service.GrpcService;
 
 import com.FTEmulator.auth.grpc.AuthOuterClass.AuthStatusRequest;
 import com.FTEmulator.auth.grpc.AuthOuterClass.AuthStatusResponse;
+import com.FTEmulator.auth.grpc.AuthOuterClass.CreateTokenRequest;
+import com.FTEmulator.auth.grpc.AuthOuterClass.CreateTokenResponse;
+import com.FTEmulator.auth.grpc.AuthOuterClass.VerifyTokenRequest;
+import com.FTEmulator.auth.grpc.AuthOuterClass.VerifyTokenResponse;
 
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
 @GrpcService
 public class UtilsImpl extends AuthGrpc.AuthImplBase {
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
 
     // Status
     @Override
@@ -38,5 +55,84 @@ public class UtilsImpl extends AuthGrpc.AuthImplBase {
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
+    }
+
+    // Check token
+    @Override
+    public void verifyToken(VerifyTokenRequest request, StreamObserver<VerifyTokenResponse> responseObserver) {
+        try {
+
+            // Token
+            String token = request.getToken();
+            Map<Object, Object> tokenData = redisTemplate.opsForHash().entries(token);
+
+            // Check the token
+            if (!tokenData.isEmpty() && "ACTIVE".equals(tokenData.get("status"))) {
+                VerifyTokenResponse response = VerifyTokenResponse.newBuilder()
+                    .setValidity(true)
+                    .build();
+
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+            } else {
+                VerifyTokenResponse response = VerifyTokenResponse.newBuilder()
+                    .setValidity(false)
+                    .build();
+
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+            }
+            
+        } catch (Exception e) {
+            responseObserver.onError(Status.INTERNAL
+                .withDescription("Error to create token: " + e.getMessage())
+                .asRuntimeException());
+        }
+    }
+
+    // Create token
+    @Override
+    public void createToken(CreateTokenRequest request, StreamObserver<CreateTokenResponse> responseObserver) {
+        try {
+
+            // Token
+            String token = UUID.randomUUID().toString();
+
+            // Dates
+            Instant createdAt = Instant.now();
+            long ttlSeconds = 1296000; // 15 días
+            Instant expiresAt = createdAt.plusSeconds(ttlSeconds);
+
+            // Create hash token
+            Map<String, String> tokenData = new HashMap<>();
+            tokenData.put("userId", request.getUserId());
+            tokenData.put("ipAddress", request.getIpAddress());
+            tokenData.put("sessionType", request.getSessionType());
+            tokenData.put("createdAt", createdAt.toString());
+            tokenData.put("expiresAt", expiresAt.toString());
+            tokenData.put("status", "ACTIVE");
+            tokenData.put("lastUsedAt", createdAt.toString());
+
+            // Save on redis
+            redisTemplate.opsForHash().putAll(token, tokenData);
+            redisTemplate.expire(token, ttlSeconds, TimeUnit.SECONDS);
+
+            // Bind token with userId
+            String userId = tokenData.get("userId");
+            redisTemplate.opsForSet().add("user:" + userId + ":tokens", token);
+
+            // Return token
+            CreateTokenResponse response = CreateTokenResponse.newBuilder()
+                    .setToken(token)
+                    .build();
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
+        } catch (Exception e) {
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("Error to create token: " + e.getMessage())
+                    .asRuntimeException());
+        }
     }
 }
