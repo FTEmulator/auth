@@ -57,7 +57,7 @@ public class UtilsImpl extends AuthGrpc.AuthImplBase {
         responseObserver.onCompleted();
     }
 
-    // Check token
+    // Verify token
     @Override
     public void verifyToken(VerifyTokenRequest request, StreamObserver<VerifyTokenResponse> responseObserver) {
         try {
