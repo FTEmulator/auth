@@ -1,5 +1,5 @@
 /*
- * FTEmulator - FTEmulator is a high-performance stock market investment simulator designed with extreme technical efficiency
+ * ftemulator - ftemulator is a high-performance stock market investment simulator designed with extreme technical efficiency
  * 
  * Copyright (C) 2025-2025 Álex Frías (alexwebdev05)
  * Licensed under GNU Affero General Public License v3.0
@@ -17,7 +17,7 @@
  * For commercial licensing inquiries, please contact: alexwebdev05@proton.me
  * GitHub: https://github.com/alexwebdev05
  */
-package com.FTEmulator.auth.security;
+package com.ftemulator.auth.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

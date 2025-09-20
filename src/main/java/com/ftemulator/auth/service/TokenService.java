@@ -1,4 +1,4 @@
-package com.FTEmulator.auth.service;
+package com.ftemulator.auth.service;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;

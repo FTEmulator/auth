@@ -1,4 +1,4 @@
-package com.FTEmulator.auth.redis;
+package com.ftemulator.auth.redis;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

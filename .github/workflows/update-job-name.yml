@@ -1,4 +1,4 @@
-# FTEmulator - FTEmulator is a high-performance stock market investment simulator designed with extreme technical efficiency
+# ftemulator - ftemulator is a high-performance stock market investment simulator designed with extreme technical efficiency
 # Copyright (C) 2025-2025 Álex Frías (alexwebdev05)
 # Licensed under AGPL-3.0 - see LICENSE file
 # Commercial licensing: alexwebdev05@proton.me | GitHub: https://github.com/alexwebdev05
@@ -30,4 +30,4 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git add flux/job.yaml
           git commit -m "Update Job name for commit $COMMIT_HASH" || echo "No changes to commit"
-          git push https://x-access-token:${GITHUB_TOKEN}@github.com/FTEmulator/auth.git HEAD:main
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/ftemulator/auth.git HEAD:main

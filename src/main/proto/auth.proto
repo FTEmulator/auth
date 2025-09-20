@@ -1,5 +1,5 @@
 syntax = "proto3";
-option java_package = "com.FTEmulator.auth.grpc";
+option java_package = "com.ftemulator.auth.grpc";
 
 service Auth {
 

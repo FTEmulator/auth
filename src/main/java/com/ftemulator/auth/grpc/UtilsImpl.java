@@ -1,5 +1,5 @@
 /*
- * FTEmulator - FTEmulator is a high-performance stock market investment simulator designed with extreme technical efficiency
+ * ftemulator - ftemulator is a high-performance stock market investment simulator designed with extreme technical efficiency
  * 
  * Copyright (C) 2025-2025 Álex Frías (alexwebdev05)
  * Licensed under GNU Affero General Public License v3.0
@@ -17,7 +17,7 @@
  * For commercial licensing inquiries, please contact: alexwebdev05@proton.me
  * GitHub: https://github.com/alexwebdev05
  */
-package com.FTEmulator.auth.grpc;
+package com.ftemulator.auth.grpc;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -29,12 +29,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.grpc.server.service.GrpcService;
 
-import com.FTEmulator.auth.grpc.AuthOuterClass.AuthStatusRequest;
-import com.FTEmulator.auth.grpc.AuthOuterClass.AuthStatusResponse;
-import com.FTEmulator.auth.grpc.AuthOuterClass.CreateTokenRequest;
-import com.FTEmulator.auth.grpc.AuthOuterClass.CreateTokenResponse;
-import com.FTEmulator.auth.grpc.AuthOuterClass.VerifyTokenRequest;
-import com.FTEmulator.auth.grpc.AuthOuterClass.VerifyTokenResponse;
+import com.ftemulator.auth.grpc.AuthOuterClass.AuthStatusRequest;
+import com.ftemulator.auth.grpc.AuthOuterClass.AuthStatusResponse;
+import com.ftemulator.auth.grpc.AuthOuterClass.CreateTokenRequest;
+import com.ftemulator.auth.grpc.AuthOuterClass.CreateTokenResponse;
+import com.ftemulator.auth.grpc.AuthOuterClass.VerifyTokenRequest;
+import com.ftemulator.auth.grpc.AuthOuterClass.VerifyTokenResponse;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
