@@ -5,7 +5,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: auth-update-job-0806ca4
+  name: auth-update-job-26e386a
   namespace: auth
 spec:
   ttlSecondsAfterFinished: 200
