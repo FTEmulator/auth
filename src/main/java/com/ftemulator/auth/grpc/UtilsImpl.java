@@ -22,6 +22,7 @@ package com.ftemulator.auth.grpc;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -57,35 +58,29 @@ public class UtilsImpl extends AuthGrpc.AuthImplBase {
         responseObserver.onCompleted();
     }
 
-    // Verify token
     @Override
     public void verifyToken(VerifyTokenRequest request, StreamObserver<VerifyTokenResponse> responseObserver) {
         try {
-
-            // Token
             String token = request.getToken();
             Map<Object, Object> tokenData = redisTemplate.opsForHash().entries(token);
 
-            // Check the token
+            VerifyTokenResponse response;
             if (!tokenData.isEmpty() && "ACTIVE".equals(tokenData.get("status"))) {
-                VerifyTokenResponse response = VerifyTokenResponse.newBuilder()
-                    .setValidity(true)
+                response = VerifyTokenResponse.newBuilder()
+                    .setUserId((String) tokenData.get("userId"))
+                    .setSessionType((String) tokenData.get("sessionType"))
+                    .setIpAddress((String) tokenData.get("ipAddress"))
                     .build();
-
-                responseObserver.onNext(response);
-                responseObserver.onCompleted();
             } else {
-                VerifyTokenResponse response = VerifyTokenResponse.newBuilder()
-                    .setValidity(false)
-                    .build();
-
-                responseObserver.onNext(response);
-                responseObserver.onCompleted();
+                response = VerifyTokenResponse.newBuilder().build();
             }
-            
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
         } catch (Exception e) {
             responseObserver.onError(Status.INTERNAL
-                .withDescription("Error to create token: " + e.getMessage())
+                .withDescription("Error verifying token: " + e.getMessage())
                 .asRuntimeException());
         }
     }
@@ -94,13 +89,51 @@ public class UtilsImpl extends AuthGrpc.AuthImplBase {
     @Override
     public void createToken(CreateTokenRequest request, StreamObserver<CreateTokenResponse> responseObserver) {
         try {
+            String userKey = "user:" + request.getUserId() + ":tokens";
 
+            // Check if this device already has a token
+            Set<String> userTokens = redisTemplate.opsForSet().members(userKey);
+            System.out.println("DEBUG: userKey = " + userKey);
+            System.out.println("DEBUG: userTokens = " + userTokens);
+            System.out.println("DEBUG: request IP = " + request.getIpAddress());
+            System.out.println("DEBUG: request sessionType = " + request.getSessionType());
+            
+            if (userTokens != null && !userTokens.isEmpty()) {
+                for (String token : userTokens) {
+                    Map<Object, Object> tokenData = redisTemplate.opsForHash().entries(token);
+                    System.out.println("DEBUG: Checking token = " + token);
+                    System.out.println("DEBUG: tokenData = " + tokenData);
+                    
+                    // Convert Object to String for proper comparison
+                    String storedIpAddress = tokenData.get("ipAddress") != null ? tokenData.get("ipAddress").toString() : null;
+                    String storedSessionType = tokenData.get("sessionType") != null ? tokenData.get("sessionType").toString() : null;
+                    
+                    System.out.println("DEBUG: storedIpAddress = [" + storedIpAddress + "]");
+                    System.out.println("DEBUG: storedSessionType = [" + storedSessionType + "]");
+                    System.out.println("DEBUG: IP match = " + request.getIpAddress().equals(storedIpAddress));
+                    System.out.println("DEBUG: Session match = " + request.getSessionType().equals(storedSessionType));
+                    
+                    if (request.getIpAddress().equals(storedIpAddress) 
+                        && request.getSessionType().equals(storedSessionType)) {
+                        System.out.println("DEBUG: MATCH FOUND! Returning existing token");
+                        // Already exists a token for this device, return it
+                        CreateTokenResponse response = CreateTokenResponse.newBuilder()
+                            .setToken(token)
+                            .build();
+                        responseObserver.onNext(response);
+                        responseObserver.onCompleted();
+                        return;
+                    }
+                }
+            }
+
+            System.out.println("DEBUG: No match found, creating new token");
             // Token
             String token = UUID.randomUUID().toString();
 
             // Dates
             Instant createdAt = Instant.now();
-            long ttlSeconds = 1296000; // 15 días
+            long ttlSeconds = 1296000; // 15 days
             Instant expiresAt = createdAt.plusSeconds(ttlSeconds);
 
             // Create hash token
@@ -118,21 +151,19 @@ public class UtilsImpl extends AuthGrpc.AuthImplBase {
             redisTemplate.expire(token, ttlSeconds, TimeUnit.SECONDS);
 
             // Bind token with userId
-            String userId = tokenData.get("userId");
-            redisTemplate.opsForSet().add("user:" + userId + ":tokens", token);
+            redisTemplate.opsForSet().add(userKey, token);
 
             // Return token
             CreateTokenResponse response = CreateTokenResponse.newBuilder()
-                    .setToken(token)
-                    .build();
-
+                .setToken(token)
+                .build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
 
         } catch (Exception e) {
             responseObserver.onError(Status.INTERNAL
-                    .withDescription("Error to create token: " + e.getMessage())
-                    .asRuntimeException());
+                .withDescription("Error to create token: " + e.getMessage())
+                .asRuntimeException());
         }
     }
 }

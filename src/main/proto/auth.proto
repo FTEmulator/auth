@@ -27,7 +27,9 @@ message VerifyTokenRequest {
 }
 
 message VerifyTokenResponse {
-    bool validity = 1;
+    string userId = 1;
+    string sessionType = 2;
+    string ipAddress = 3;
 }
 
 // Create token
