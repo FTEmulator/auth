@@ -21,9 +21,7 @@
 package com.ftemulator.auth.grpc;
 
 import java.security.Key;
-import java.security.SecureRandom;
 import java.time.Instant;
-import java.util.Base64;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -48,26 +46,22 @@ public class UtilsImpl extends AuthGrpc.AuthImplBase {
 
     private static final long TOKEN_EXPIRATION_SECONDS = 1_296_000L; // 15 days
 
-    // Initialize signing key from environment variable or generate a new one
+    // Initialize signing key from environment variable
     private static Key initializeSigningKey() {
 
         // Check for JWT_SECRET environment variable
         String envSecret = System.getenv("JWT_SECRET");
 
-        // If provided, use it as the signing key
-        if (envSecret != null && !envSecret.isBlank()) {
-            System.out.println("[SECURITY] Using JWT_SECRET from environment.");
-            return Keys.hmacShaKeyFor(envSecret.getBytes());
+        // JWT_SECRET is required
+        if (envSecret == null || envSecret.isBlank()) {
+            throw new IllegalStateException(
+                "[SECURITY] JWT_SECRET environment variable is required but not set. " +
+                "Please set JWT_SECRET in your .env file."
+            );
         }
 
-        // Otherwise, generate a new random key at startup
-        byte[] randomBytes = new byte[64];
-        new SecureRandom().nextBytes(randomBytes);
-        String generated = Base64.getEncoder().encodeToString(randomBytes);
-
-        // Log a warning since this key will not persist across restarts
-        System.out.println("[SECURITY] Generated new ephemeral JWT signing key at startup.");
-        return Keys.hmacShaKeyFor(generated.getBytes());
+        System.out.println("[SECURITY] Using JWT_SECRET from environment.");
+        return Keys.hmacShaKeyFor(envSecret.getBytes());
     }
 
     // Auth status
