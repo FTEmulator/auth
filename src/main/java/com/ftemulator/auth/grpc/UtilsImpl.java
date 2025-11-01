@@ -46,11 +46,14 @@ public class UtilsImpl extends AuthGrpc.AuthImplBase {
 
     private static final long TOKEN_EXPIRATION_SECONDS = 1_296_000L; // 15 days
 
-    // Initialize signing key from environment variable
+    // Initialize signing key from environment variable or system property
     private static Key initializeSigningKey() {
 
-        // Check for JWT_SECRET environment variable
+        // Check for JWT_SECRET from environment variable or system property (for tests)
         String envSecret = System.getenv("JWT_SECRET");
+        if (envSecret == null || envSecret.isBlank()) {
+            envSecret = System.getProperty("JWT_SECRET");
+        }
 
         // JWT_SECRET is required
         if (envSecret == null || envSecret.isBlank()) {

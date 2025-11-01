@@ -26,7 +26,27 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AuthApplication {
 
 	public static void main(String[] args) {
+		// Load .env file and set system properties
+		loadEnvironmentVariables();
+
 		SpringApplication.run(AuthApplication.class, args);
+	}
+
+	private static void loadEnvironmentVariables() {
+		try {
+			io.github.cdimascio.dotenv.Dotenv dotenv = io.github.cdimascio.dotenv.Dotenv.configure()
+				.ignoreIfMissing()
+				.load();
+
+			// Set all dotenv variables as system properties
+			dotenv.entries().forEach(entry -> {
+				System.setProperty(entry.getKey(), entry.getValue());
+			});
+
+			System.out.println("[CONFIG] Loaded environment variables from .env file");
+		} catch (Exception e) {
+			System.err.println("[CONFIG] Warning: Could not load .env file: " + e.getMessage());
+		}
 	}
 
 }

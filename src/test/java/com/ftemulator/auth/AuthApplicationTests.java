@@ -21,9 +21,24 @@ package com.ftemulator.auth;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
 
 @SpringBootTest
+@ContextConfiguration(initializers = AuthApplicationTests.Initializer.class)
 class AuthApplicationTests {
+
+	static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+		@Override
+		public void initialize(ConfigurableApplicationContext applicationContext) {
+			// Set system properties before Spring context loads
+			System.setProperty("JWT_SECRET", "test-jwt-secret-key-for-testing-purposes-only-do-not-use-in-production-environment");
+			System.setProperty("REDIS_HOST", "localhost");
+			System.setProperty("REDIS_PORT", "6379");
+			System.setProperty("REDIS_PASSWORD", "redis");
+		}
+	}
 
 	@Test
 	void contextLoads() {
