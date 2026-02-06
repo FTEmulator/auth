@@ -1,0 +1,61 @@
+syntax = "proto3";
+option java_package = "com.ftemulator.profile.grpc";
+
+service Profile {
+
+    // ProfileStatus
+    rpc ProfileStatus (ProfileStatusRequest) returns (ProfileStatusResponse);
+
+    // Get user
+    rpc GetUser(UserRequest) returns (UserResponse);
+
+    // Register user
+    rpc CreateUser(RegisterUserRequest) returns (RegisterUserResponse);
+
+    // Login
+    rpc Login(LoginRequest) returns (LoginResponse);
+}
+
+// ProfileStatus
+message ProfileStatusRequest {}
+
+message ProfileStatusResponse {
+    bool ok = 1;
+}
+
+// Get user
+message UserRequest {
+    string userId = 1;
+}
+
+message UserResponse {
+    string userId = 1;
+    string name = 2;
+    string email = 3;
+}
+
+// Register user
+message RegisterUserRequest {
+    string name = 1;
+    string email = 2;
+    string password = 3;
+    string country = 4;
+    int64 experience = 5;
+    string photo = 6;
+    string biography = 7;
+}
+
+message RegisterUserResponse {
+    bool created = 1;
+    string userId = 2;
+}
+
+// Login
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    string userId = 1;
+}

@@ -39,6 +39,9 @@ class AuthApplicationTests {
 			System.setProperty("REDIS_HOST", "localhost");
 			System.setProperty("REDIS_PORT", "6379");
 			System.setProperty("REDIS_PASSWORD", "redis");
+			System.setProperty("DB_URL", "jdbc:postgresql://localhost:5432/profile");
+			System.setProperty("POSTGRES_USER", "postgres");
+			System.setProperty("POSTGRES_PASSWORD", "postgres");
 		}
 	}
 
