@@ -21,11 +21,13 @@ package com.ftemulator.auth;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @ContextConfiguration(initializers = AuthApplicationTests.Initializer.class)
 class AuthApplicationTests {
 
